@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+    <script src="https://code.angularjs.org/1.2.1/angular.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+    <script src="firebase.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+</head>
+
+<body ng-controller="videoController as v" class="container">
+    <div class="row">
+        <div class="col-sm-12 text-center pagination-centered ">
+            <h1> Currently playing: {{current}} <h1>
+    </div>
+  </div>
+  <div class="row jumbotron">
+    <div class="col-sm-12 text-center pagination-centered">
+      <iframe width="500" height="300" ng-src="{{getIframeSrc(current)}}" frameborder="0 " allowfullscreen></iframe>
+    </div>
+  </div>
+<!-- add new stream -->
+  <script>
+    var app = angular.module('myApp', []);
+    // White list for the external websites 
+app.config(function($sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist([
+    'self',
+    'https://player.twitch.tv/**',
+    'https://controlroom.firebaseio.com/'
+  ]);
+});
+//controller for the videos
+app.controller('videoController', ['$scope',
+  function MyCtrl($scope) {
+    $scope.currentStream = new Firebase(csVar);
+    $scope.streams = new Firebase(sVar);
+    $scope.current;
+    $scope.getIframeSrc = function(src) {
+      return 'https://player.twitch.tv/?channel=' + src ;
+    };
+    $scope.currentStream.on('value', function(snapshot){
+      $scope.setCurrent(snapshot.val());
+    });
+    $scope.setCurrent = function(src){
+    $scope.currentStream.set(src);
+  };
+  }]);
+  </script>
+</body>
+
+</html>
