@@ -22,9 +22,14 @@
     </div>
   </div>
   <div class="row jumbotron">
-    <div class="col-sm-12 text-center pagination-centered">
+    <div class="col-sm-12">
       <iframe height="378" width="620" ng-src="{{getIframeSrc(current)}}" frameborder="0 " allowfullscreen></iframe>
     </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-12">
+       <iframe ng-src="{{getChat(current)}}" frameborder="0" scrolling="no" height="500" width="620"></iframe>
+        </div>
   </div>
   <button type="button" class="btn btn-primary" ng-click="refresh();">Refresh stream<span class="glyphicon glyphicon-play-circle"></span></button>
 
@@ -38,7 +43,8 @@ app.config(function($sceDelegateProvider) {
     'http://usher.ttvnw.net/**',
     'http://player.twitch.tv/**',
     'https://player.twitch.tv/**',
-    'https://controlroom.firebaseio.com/'
+    'https://controlroom.firebaseio.com/',
+    'https://www.twitch.tv/**'
   ]);
 });
 //controller for the videos
@@ -51,6 +57,12 @@ app.controller('videoController', ['$scope',
       return 'https://player.twitch.tv/?channel=' + src ;
     };
     
+    $scope.getChat = function(src){
+      return 'https://www.twitch.tv/' + src + '/chat?popout=';
+      
+    };
+    
+   
     $scope.currentStream.on('value', function(snapshot){
       console.log("ON Function: " + snapshot.val());
       $scope.current = snapshot.val();

@@ -20,6 +20,7 @@
 
   <!-- Latest compiled JavaScript -->
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
   <link rel="stylesheet" href="style.css" />
 
   <script src="script.js"></script>
@@ -40,31 +41,32 @@
   </div>
   <div class="row">
   </div>
-
-  <div class="row">
-    <div ng-repeat="media in product.media" >
+  
+    <div class="row">
+    <div ng-repeat="media in str" >
       <div class="thumbnail col-md-4 panel panel-default">
         <div class="video panel-body">
-          <div class="panel-heading">{{media.src}}</div>
+          <div class="panel-heading">{{media}}</div>
           <div >
-             <iframe width="400" height="315" ng-src="{{getIframeSrc(media.src)}}" frameborder="0 " allowfullscreen></iframe>
+             <iframe width="352" height="480" ng-src="{{getIframeSrc(media)}}" frameborder="0 " allowfullscreen></iframe>
             </div>
             <div class="row">
-            <button type="button" class="btn btn-primary" ng-click="setCurrent(media.src);">Stream it! <span class="glyphicon glyphicon-play-circle"></span></button>
+            <button type="button" class="btn btn-primary" ng-click="setCurrent(media);">Stream it!<span class="glyphicon glyphicon-play-circle"></span></button>
+            <button type="button" class="btn btn-danger" ng-click="removeValue(media);">Remove<span class="glyphicon glyphicon-play-cross"></span></button>
+            
             </div>
         </div>
       </div>
     </div>
   </div>
- 
   
   <div class="row">
-    <div ng-repeat="m in str">
-      {{m}}
-      </div>
+    <input type="text" name="userName" ng-model="$scope.toAdd" required>
+    <button type="button" class="btn btn-primary" ng-click="add($scope.toAdd);">Stream it! <span class="glyphicon glyphicon-play-circle"></span></button>
+            
   </div>
   
- 
+ <div ng-repeat="s in str">Stream {{s}}</div>
 
 <!-- add new stream -->
 
@@ -87,43 +89,35 @@ app.controller('videoController', ['$scope',
     $scope.streams = sVar;
     $scope.current;
     $scope.temp;
-    $scope.product = {
-      name: 'myChannel',
-      description: 'some description',
-      media: [{
-        src: 'impaktpt'
-      },
-      {
-          src:'deadmau5'
-      },
-      {
-        src: 'wintergaming'
-      }]
-    }; 
+    $scope.toAdd;
+    
+    $scope.add = function(added){
+      console.log("ADDED: " + added);
+      $scope.str.push(added);
+      $scope.streams.set($scope.str);
+    };
+    
+    $scope.removeValue = function(value){
+       $scope.str = _.without($scope.str, value);
+       $scope.streams.set($scope.str);
+    };
     
     $scope.str;
     
     $scope.streams.on('value',function(snapshot){
-      console.log("STREAMS: " + snapshot.val());
       $scope.str = snapshot.val();
+      $scope.$apply();
     });
-    
-    $scope.addStream = function(stream){
-    }
-    
     
     $scope.getIframeSrc = function(src) {
       return 'https://player.twitch.tv/?channel=' + src ;
     };
-    
-    
-    
-    
+   
     $scope.currentStream.on('value', function(snapshot){
+      console.log("Current: " + snapshot.val());
       $scope.current = snapshot.val();
+      $scope.$apply();
     })
-    
-    
     
     $scope.setCurrent = function(src){
     $scope.currentStream.set(src);
